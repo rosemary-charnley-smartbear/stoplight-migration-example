@@ -3,19 +3,19 @@ x-stoplight:
   id: order-model-0001
 type: object
 description: A customer order composed of one or more line items.
-examples:
-  - id: o9f8e7d6-c5b4-4a32-9110-fedcba987654
-    customerId: c1a2b3c4-d5e6-7f80-9a1b-2c3d4e5f6071
-    status: pending
-    items:
-      - productId: 8f3b6d1e-2c4a-4f9b-9a1e-7c2d5e6f8a90
-        quantity: 2
-        unitPrice:
-          amount: 12900
-          currency: USD
-    total:
-      amount: 25800
-      currency: USD
+example:
+  id: o9f8e7d6-c5b4-4a32-9110-fedcba987654
+  customerId: c1a2b3c4-d5e6-7f80-9a1b-2c3d4e5f6071
+  status: pending
+  items:
+    - productId: 8f3b6d1e-2c4a-4f9b-9a1e-7c2d5e6f8a90
+      quantity: 2
+      unitPrice:
+        amount: 12900
+        currency: USD
+  total:
+    amount: 25800
+    currency: USD
 properties:
   id:
     type: string
@@ -52,7 +52,7 @@ properties:
         - quantity
       additionalProperties: false
   total:
-    $ref: ./Money.yaml
+    $ref: ./Money.yml
 required:
   - customerId
   - items

@@ -5,9 +5,9 @@ type: object
 description: >-
   A monetary amount as a minor-unit integer plus an ISO 4217 currency code.
   Reused across models via a JSON Schema `$ref`.
-examples:
-  - amount: 1999
-    currency: USD
+example:
+  amount: 1999
+  currency: USD
 properties:
   amount:
     type: integer

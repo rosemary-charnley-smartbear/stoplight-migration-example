@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir -p bundled
           curl --fail --silent --show-error \
-            --output bundled/Store-API.v1.yml \
+            --output bundled/Store-API.v1-bundled.yml \
             --request GET \
             "https://api.stoplight.io/projects/${STOPLIGHT_PROJECT_ID}/branches/main/export/reference/Store-API.v1.yml" \
             --header "Authorization: Bearer ${STOPLIGHT_TOKEN}" \
@@ -33,7 +33,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bundled/Store-API.v1.yml
+          git add bundled/Store-API.v1-bundled.yml
           if ! git diff --staged --quiet; then
             git commit -m "chore: update bundled Store-API spec [skip ci]"
             git push
@@ -82,7 +82,7 @@ jobs:
           def normalize(parsed):
               return json.dumps(strip_swaggerhub_keys(parsed), sort_keys=True)
 
-          spec_path = Path("bundled/Store-API.v1.yml")
+          spec_path = Path("bundled/Store-API.v1-bundled.yml")
           spec_text = spec_path.read_text(encoding="utf-8")
           parsed    = yaml.safe_load(spec_text)
 
