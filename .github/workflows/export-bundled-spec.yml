@@ -90,7 +90,7 @@ jobs:
           version = str(info.get("version", "1.0.0"))
 
           # Name is derived from the bundled filename, not the spec title
-          api_name = slugify(spec_path.stem + "-bundled")
+          api_name = slugify(spec_path.stem)
 
           # Tag this as a Stoplight-bundled spec before pushing
           info["x-source"] = "stoplight-bundled"
