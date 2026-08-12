@@ -1,11 +1,10 @@
-openapi: '3.0.3'
+openapi: 3.0.3
+x-stoplight:
+  id: 14409fdca6585
 info:
   title: Common
   version: '1.0'
-  description: >-
-    Shared building blocks (schemas, parameters, responses) referenced by other
-    specifications in this project. This is not a deployable API on its own — it
-    exists purely to be `$ref`-ed from Store-API.v1.yaml and the model files.
+  description: 'Shared building blocks (schemas, parameters, responses) referenced by other specifications in this project. This is not a deployable API on its own — it exists purely to be `$ref`-ed from Store-API.v1.yaml and the model files.'
   contact:
     name: Platform Team
     email: platform@example.com
@@ -20,7 +19,7 @@ components:
     Address:
       title: Address
       type: object
-      description: A postal address, shared across customer and shipping models.
+      description: 'A postal address, shared across customer and shipping models.'
       properties:
         line1:
           type: string
@@ -30,7 +29,7 @@ components:
           type: string
         region:
           type: string
-          description: State, province, or region.
+          description: 'State, province, or region.'
         postalCode:
           type: string
         countryCode:
@@ -50,7 +49,7 @@ components:
         type:
           type: string
           format: uri
-          default: about:blank
+          default: 'about:blank'
         title:
           type: string
         status:

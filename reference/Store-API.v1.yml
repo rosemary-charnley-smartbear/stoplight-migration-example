@@ -1,18 +1,14 @@
-openapi: '3.0.3'
+openapi: 3.0.3
+x-stoplight:
+  id: 97b927efabdeb
 info:
   title: Store API
   version: '1.0'
-  description: >-
-    Reference example of an OpenAPI 3.0 description structured the Stoplight way:
-    a thin spec in `reference/` that pulls schemas from standalone JSON Schema
-    files in `models/` and shared components from another spec (`Common.v1.yaml`)
-    using `$ref`.
-
+  description: |-
+    Reference example of an OpenAPI 3.0 description structured the Stoplight way: a thin spec in `reference/` that pulls schemas from standalone JSON Schema files in `models/` and shared components from another spec (`Common.v1.yaml`) using `$ref`.
 
     Three kinds of `$ref` appear below, each labelled inline:
-
     1. **Internal** — `#/components/...` points inside this same file.
-
     2. **External JSON Schema model** — `../models/Product.yaml` points at a
        standalone schema file.
 
@@ -41,8 +37,8 @@ paths:
         - Products
       parameters:
         # Cross-specification $ref: parameters defined in the shared Common spec.
-        - $ref: './Common.v1.yaml#/components/parameters/PageLimit'
-        - $ref: './Common.v1.yaml#/components/parameters/PageCursor'
+        - $ref: ./Common.v1.yaml#/components/parameters/PageLimit
+        - $ref: ./Common.v1.yaml#/components/parameters/PageCursor
         - name: status
           in: query
           schema:
@@ -63,15 +59,15 @@ paths:
                     type: array
                     items:
                       # External JSON Schema model file.
-                      $ref: '../models/Product.yaml'
+                      $ref: ../models/Product.yaml
                   nextCursor:
                     type: string
                     nullable: true
                 required:
                   - data
-        '4XX':
+        4XX:
           # Cross-specification $ref to a reusable response.
-          $ref: './Common.v1.yaml#/components/responses/Problem'
+          $ref: ./Common.v1.yaml#/components/responses/Problem
     post:
       operationId: createProduct
       summary: Create a product
@@ -82,7 +78,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../models/Product.yaml'
+              $ref: ../models/Product.yaml
       responses:
         '201':
           description: The created product.
@@ -94,10 +90,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../models/Product.yaml'
+                $ref: ../models/Product.yaml
         '422':
-          $ref: './Common.v1.yaml#/components/responses/Problem'
-  /products/{productId}:
+          $ref: ./Common.v1.yaml#/components/responses/Problem
+  '/products/{productId}':
     parameters:
       # Internal $ref to a parameter defined in this file's components block.
       - $ref: '#/components/parameters/ProductId'
@@ -112,9 +108,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../models/Product.yaml'
+                $ref: ../models/Product.yaml
         '404':
-          $ref: './Common.v1.yaml#/components/responses/NotFound'
+          $ref: ./Common.v1.yaml#/components/responses/NotFound
   /orders:
     post:
       operationId: createOrder
@@ -126,17 +122,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '../models/Order.yaml'
+              $ref: ../models/Order.yaml
       responses:
         '201':
           description: The created order.
           content:
             application/json:
               schema:
-                $ref: '../models/Order.yaml'
+                $ref: ../models/Order.yaml
         '400':
-          $ref: './Common.v1.yaml#/components/responses/Problem'
-  /orders/{orderId}:
+          $ref: ./Common.v1.yaml#/components/responses/Problem
+  '/orders/{orderId}':
     parameters:
       - name: orderId
         in: path
@@ -151,20 +147,20 @@ paths:
         - Orders
       responses:
         '200':
-          description: The requested order, with the customer inlined.
+          description: 'The requested order, with the customer inlined.'
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '../models/Order.yaml'
+                  - $ref: ../models/Order.yaml
                   - type: object
                     properties:
                       customer:
-                        # External model that itself $refs into Common.v1.yaml —
                         # references can chain across files.
-                        $ref: '../models/Customer.yaml'
+                        # External model that itself $refs into Common.v1.yaml —
+                        $ref: ../models/Customer.yaml
         '404':
-          $ref: './Common.v1.yaml#/components/responses/NotFound'
+          $ref: ./Common.v1.yaml#/components/responses/NotFound
 components:
   parameters:
     ProductId:
