@@ -1,0 +1,205 @@
+openapi: 3.0.3
+info:
+  version: '1.0'
+  title: Store API
+  description: |-
+    Reference example of an OpenAPI 3.0 description structured the Stoplight way: a thin spec in `reference/` that pulls schemas from standalone JSON Schema files in `models/` and shared components from another spec (`Common.v1.yaml`) using `$ref`.
+
+    Three kinds of `$ref` appear below, each labelled inline:
+    1. **Internal** — `#/components/...` points inside this same file.
+    2. **External JSON Schema model** — `../models/Product.yaml` points at a
+       standalone schema file.
+
+    3. **Cross-specification** — `./Common.v1.yaml#/components/...` points into a
+       different OpenAPI document.
+  contact:
+    name: Store API Team
+    email: api@example.com
+  license:
+    url: 'https://opensource.org/licenses/MIT'
+    name: MIT
+servers:
+  - url: 'https://api.example.com/v1'
+    description: Production
+  - url: 'https://sandbox.api.example.com/v1'
+    description: Sandbox
+paths:
+  /products:
+    get:
+      tags:
+        - Products
+      summary: List products
+      operationId: listProducts
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - draft
+              - active
+              - archived
+      responses:
+        '200':
+          description: A page of products.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: ../models/Product.yaml
+                  nextCursor:
+                    type: string
+                    nullable: true
+                required:
+                  - data
+        4XX:
+          $ref: ./Common.v1.yaml#/components/responses/Problem
+      security:
+        - bearerAuth: []
+      servers:
+        - url: 'https://api.example.com/v1'
+          description: Production
+        - url: 'https://sandbox.api.example.com/v1'
+          description: Sandbox
+    post:
+      tags:
+        - Products
+      summary: Create a product
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ../models/Product.yaml
+      responses:
+        '201':
+          description: The created product.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Product.yaml
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+        '422':
+          $ref: ./Common.v1.yaml#/components/responses/Problem
+      security:
+        - bearerAuth: []
+      servers:
+        - url: 'https://api.example.com/v1'
+          description: Production
+        - url: 'https://sandbox.api.example.com/v1'
+          description: Sandbox
+  '/products/{productId}':
+    get:
+      tags:
+        - Products
+      summary: Get a product by id
+      operationId: getProduct
+      parameters:
+        - $ref: '#/components/parameters/ProductId'
+      responses:
+        '200':
+          description: The requested product.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Product.yaml
+        '404':
+          $ref: ./Common.v1.yaml#/components/responses/NotFound
+      security:
+        - bearerAuth: []
+      servers:
+        - url: 'https://api.example.com/v1'
+          description: Production
+        - url: 'https://sandbox.api.example.com/v1'
+          description: Sandbox
+  /orders:
+    post:
+      tags:
+        - Orders
+      summary: Create an order
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ../models/Product.yaml
+      responses:
+        '201':
+          description: The created order.
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Product.yaml
+        '400':
+          $ref: ./Common.v1.yaml#/components/responses/Problem
+      security:
+        - bearerAuth: []
+      servers:
+        - url: 'https://api.example.com/v1'
+          description: Production
+        - url: 'https://sandbox.api.example.com/v1'
+          description: Sandbox
+  '/orders/{orderId}':
+    get:
+      tags:
+        - Orders
+      summary: Get an order by id
+      operationId: getOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 'The requested order, with the customer inlined.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: ../models/Order.yaml
+                  - type: object
+                    properties:
+                      customer:
+                        $ref: ../models/Customer.yaml
+        '404':
+          $ref: ./Common.v1.yaml#/components/responses/NotFound
+      security:
+        - bearerAuth: []
+      servers:
+        - url: 'https://api.example.com/v1'
+          description: Production
+        - url: 'https://sandbox.api.example.com/v1'
+          description: Sandbox
+tags:
+  - name: Products
+  - name: Orders
+components:
+  parameters:
+    ProductId:
+      name: productId
+      in: path
+      description: Unique identifier of the product.
+      required: true
+      schema:
+        type: string
+        format: uuid
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
