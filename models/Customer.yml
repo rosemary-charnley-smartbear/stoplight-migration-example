@@ -1,0 +1,27 @@
+title: Customer
+x-stoplight:
+  id: customer-model-0001
+type: object
+description: A customer who can place orders.
+examples:
+  - id: c1a2b3c4-d5e6-7f80-9a1b-2c3d4e5f6071
+    email: dana@example.com
+    displayName: Dana Ives
+properties:
+  id:
+    type: string
+    format: uuid
+    readOnly: true
+  email:
+    type: string
+    format: email
+  displayName:
+    type: string
+    maxLength: 160
+  defaultShippingAddress:
+    # Reference into ANOTHER specification (the shared Common spec) rather than a
+    # standalone model file. Stoplight resolves this across files at build time.
+    $ref: ../reference/Common.v1.yaml#/components/schemas/Address
+required:
+  - email
+additionalProperties: false

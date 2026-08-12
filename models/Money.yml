@@ -1,0 +1,26 @@
+title: Money
+x-stoplight:
+  id: money-model-0001
+type: object
+description: >-
+  A monetary amount as a minor-unit integer plus an ISO 4217 currency code.
+  Reused across models via a JSON Schema `$ref`.
+examples:
+  - amount: 1999
+    currency: USD
+properties:
+  amount:
+    type: integer
+    format: int64
+    description: Value in the smallest currency unit (e.g. cents).
+    minimum: 0
+    example: 1999
+  currency:
+    type: string
+    description: ISO 4217 three-letter currency code.
+    pattern: '^[A-Z]{3}$'
+    example: USD
+required:
+  - amount
+  - currency
+additionalProperties: false

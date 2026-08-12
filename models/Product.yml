@@ -1,0 +1,48 @@
+title: Product
+x-stoplight:
+  id: product-model-0001
+type: object
+description: A single sellable product in the store catalog.
+examples:
+  - id: 8f3b6d1e-2c4a-4f9b-9a1e-7c2d5e6f8a90
+    name: Trail Runner Backpack
+    status: active
+    price:
+      amount: 12900
+      currency: USD
+    tags:
+      - outdoor
+      - bags
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Server-generated unique identifier.
+    readOnly: true
+  name:
+    type: string
+    minLength: 1
+    maxLength: 120
+  description:
+    type: string
+    maxLength: 2000
+  status:
+    type: string
+    description: Lifecycle state of the product.
+    enum:
+      - draft
+      - active
+      - archived
+    default: draft
+  price:
+    # JSON Schema reference to another local model file.
+    $ref: ./Money.yaml
+  tags:
+    type: array
+    items:
+      type: string
+    uniqueItems: true
+required:
+  - name
+  - price
+additionalProperties: false

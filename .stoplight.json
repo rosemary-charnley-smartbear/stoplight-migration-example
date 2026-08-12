@@ -1,0 +1,35 @@
+{
+  "$schema": "https://meta.stoplight.io/project-schema.json",
+  "version": "1.0",
+  "name": "Store API",
+  "toc": {
+    "items": [
+      {
+        "type": "group",
+        "title": "APIs",
+        "items": [
+          {
+            "type": "item",
+            "title": "Store API",
+            "uri": "/references/Store-API.v1.yaml"
+          },
+          {
+            "type": "item",
+            "title": "Common",
+            "uri": "/reference/Common.v1.yaml"
+          }
+        ]
+      },
+      {
+        "type": "group",
+        "title": "Models",
+        "items": [
+          { "type": "item", "title": "Product", "uri": "/models/Product.yaml" },
+          { "type": "item", "title": "Order", "uri": "/models/Order.yaml" },
+          { "type": "item", "title": "Customer", "uri": "/models/Customer.yaml" },
+          { "type": "item", "title": "Money", "uri": "/models/Money.yaml" }
+        ]
+      }
+    ]
+  }
+}

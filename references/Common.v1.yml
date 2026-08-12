@@ -1,0 +1,103 @@
+openapi: '3.0.3'
+info:
+  title: Common
+  version: '1.0'
+  description: >-
+    Shared building blocks (schemas, parameters, responses) referenced by other
+    specifications in this project. This is not a deployable API on its own — it
+    exists purely to be `$ref`-ed from Store-API.v1.yaml and the model files.
+  contact:
+    name: Platform Team
+    email: platform@example.com
+  license:
+    name: MIT
+servers:
+  - url: 'https://api.example.com'
+    description: Placeholder; consumers override this.
+paths: {}
+components:
+  schemas:
+    Address:
+      title: Address
+      type: object
+      description: A postal address, shared across customer and shipping models.
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        region:
+          type: string
+          description: State, province, or region.
+        postalCode:
+          type: string
+        countryCode:
+          type: string
+          description: ISO 3166-1 alpha-2 country code.
+          pattern: '^[A-Z]{2}$'
+      required:
+        - line1
+        - city
+        - countryCode
+      additionalProperties: false
+    Error:
+      title: Error
+      type: object
+      description: RFC 7807-style problem detail used by every error response.
+      properties:
+        type:
+          type: string
+          format: uri
+          default: about:blank
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+      required:
+        - title
+        - status
+      additionalProperties: false
+  parameters:
+    PageLimit:
+      name: limit
+      in: query
+      description: Maximum number of items to return.
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    PageCursor:
+      name: cursor
+      in: query
+      description: Opaque pagination cursor from a previous response.
+      required: false
+      schema:
+        type: string
+  responses:
+    Problem:
+      description: An error occurred.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            title: Not Found
+            status: 404
+            detail: No resource matches the given id.
