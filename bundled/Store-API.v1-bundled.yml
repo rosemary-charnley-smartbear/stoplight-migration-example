@@ -432,4 +432,3 @@ components:
         - status
 security:
   - bearerAuth: []
-x-internal: true
