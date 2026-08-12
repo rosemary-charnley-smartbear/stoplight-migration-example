@@ -29,6 +29,108 @@ jobs:
             --header "Accept: application/yaml" \
             --header "Stoplight-Version: 2022-12-05"
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install PyYAML requests
+
+      - name: Push bundled spec to SwaggerHub
+        env:
+          SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
+          SWAGGERHUB_OWNER: ${{ secrets.SWAGGERHUB_OWNER }}
+        run: |
+          python - <<'EOF'
+          import os
+          import re
+          import sys
+          import json
+          import yaml
+          import requests
+          from pathlib import Path
+
+          APIS_BASE = "https://api.swaggerhub.com/apis"
+          API_KEY   = os.environ["SWAGGERHUB_API_KEY"]
+          OWNER     = os.environ["SWAGGERHUB_OWNER"]
+          AUTH      = {"Authorization": API_KEY}
+
+          def slugify(value):
+              return re.sub(r"[^a-zA-Z0-9]+", "-", value).strip("-")
+
+          def strip_swaggerhub_keys(obj):
+              if isinstance(obj, dict):
+                  return {k: strip_swaggerhub_keys(v) for k, v in obj.items()
+                          if not k.startswith("x-swaggerhub")}
+              if isinstance(obj, list):
+                  return [strip_swaggerhub_keys(i) for i in obj]
+              return obj
+
+          def normalize(parsed):
+              return json.dumps(strip_swaggerhub_keys(parsed), sort_keys=True)
+
+          spec_path = Path("bundled/Store-API.v1.yml")
+          spec_text = spec_path.read_text(encoding="utf-8")
+          parsed    = yaml.safe_load(spec_text)
+
+          info     = parsed.get("info", {})
+          title    = info.get("title", spec_path.stem)
+          version  = str(info.get("version", "1.0.0"))
+          api_name = slugify(title)
+          hub_url  = f"https://app.swaggerhub.com/apis/{OWNER}/{api_name}/{version}"
+
+          print(f"  Spec     : {spec_path}")
+          print(f"  API name : {api_name}")
+          print(f"  Version  : {version}")
+          print(f"  Owner    : {OWNER}")
+          print()
+
+          get_resp = requests.get(
+              f"{APIS_BASE}/{OWNER}/{api_name}/{version}",
+              headers={**AUTH, "Accept": "application/yaml"},
+              timeout=30,
+          )
+
+          if get_resp.status_code == 404:
+              print("  API not found in SwaggerHub — creating...")
+              post_resp = requests.post(
+                  f"{APIS_BASE}/{OWNER}/{api_name}",
+                  params={"version": version, "isPrivate": "true"},
+                  headers={**AUTH, "Content-Type": "application/yaml"},
+                  data=spec_text.encode("utf-8"),
+                  timeout=30,
+              )
+              if post_resp.status_code in (200, 201):
+                  print(f"  [+] Created: {hub_url}")
+              else:
+                  print(f"  [!] Create failed ({post_resp.status_code}): {post_resp.text[:300]}")
+                  sys.exit(1)
+
+          elif get_resp.status_code == 200:
+              remote_parsed = yaml.safe_load(get_resp.text)
+              if normalize(parsed) == normalize(remote_parsed):
+                  print("  [=] No changes — local spec matches SwaggerHub, skipping update")
+              else:
+                  print("  Spec has changed — updating SwaggerHub...")
+                  put_resp = requests.post(
+                      f"{APIS_BASE}/{OWNER}/{api_name}",
+                      params={"version": version, "isPrivate": "true", "force": "true"},
+                      headers={**AUTH, "Content-Type": "application/yaml"},
+                      data=spec_text.encode("utf-8"),
+                      timeout=30,
+                  )
+                  if put_resp.status_code in (200, 201):
+                      print(f"  [~] Updated: {hub_url}")
+                  else:
+                      print(f"  [!] Update failed ({put_resp.status_code}): {put_resp.text[:300]}")
+                      sys.exit(1)
+
+          else:
+              print(f"  [!] Unexpected response from SwaggerHub ({get_resp.status_code}): {get_resp.text[:300]}")
+              sys.exit(1)
+          EOF
+
       - name: Commit bundled spec to repository
         run: |
           git config user.name "github-actions[bot]"
