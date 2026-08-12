@@ -2,16 +2,7 @@ openapi: 3.0.3
 info:
   version: '1.0'
   title: Store API
-  description: |-
-    Reference example of an OpenAPI 3.0 description structured the Stoplight way: a thin spec in `reference/` that pulls schemas from standalone JSON Schema files in `models/` and shared components from another spec (`Common.v1.yaml`) using `$ref`.
-
-    Three kinds of `$ref` appear below, each labelled inline:
-    1. **Internal** — `#/components/...` points inside this same file.
-    2. **External JSON Schema model** — `../models/Product.yaml` points at a
-       standalone schema file.
-
-    3. **Cross-specification** — `./Common.v1.yaml#/components/...` points into a
-       different OpenAPI document.
+  description: Store API with references
   contact:
     name: Store API Team
     email: api@example.com
