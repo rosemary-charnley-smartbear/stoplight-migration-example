@@ -1,4 +1,4 @@
-name: Export Bundled OpenAPI Spec
+name: Export Stoplight Bundled OpenAPI Spec and Push to Swagger
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  export:
+  export-bundle-and-push-to-swagger:
     runs-on: ubuntu-latest
     permissions:
       contents: write
