@@ -40,7 +40,7 @@ jobs:
       - name: Push bundled spec to SwaggerHub
         env:
           SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
-          SWAGGERHUB_OWNER: ${{ secrets.SWAGGERHUB_OWNER }}
+          SWAGGERHUB_OWNER: ${{ vars.SWAGGERHUB_OWNER }}
         run: |
           python - <<'EOF'
           import os
@@ -74,11 +74,17 @@ jobs:
           spec_text = spec_path.read_text(encoding="utf-8")
           parsed    = yaml.safe_load(spec_text)
 
-          info     = parsed.get("info", {})
-          title    = info.get("title", spec_path.stem)
-          version  = str(info.get("version", "1.0.0"))
-          api_name = slugify(title)
-          hub_url  = f"https://app.swaggerhub.com/apis/{OWNER}/{api_name}/{version}"
+          info    = parsed.setdefault("info", {})
+          version = str(info.get("version", "1.0.0"))
+
+          # Name is derived from the bundled filename, not the spec title
+          api_name = slugify(spec_path.stem + "-bundled")
+
+          # Tag this as a Stoplight-bundled spec before pushing
+          info["x-source"] = "stoplight-bundled"
+          spec_text = yaml.dump(parsed, allow_unicode=True, sort_keys=False)
+
+          hub_url = f"https://app.swaggerhub.com/apis/{OWNER}/{api_name}/{version}"
 
           print(f"  Spec     : {spec_path}")
           print(f"  API name : {api_name}")
