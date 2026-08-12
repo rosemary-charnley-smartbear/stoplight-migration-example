@@ -1,0 +1,42 @@
+name: Export Bundled OpenAPI Spec
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Export bundled spec from Stoplight
+        env:
+          STOPLIGHT_TOKEN: ${{ secrets.STOPLIGHT_TOKEN }}
+          STOPLIGHT_PROJECT_ID: ${{ vars.STOPLIGHT_PROJECT_ID }}
+        run: |
+          mkdir -p bundled
+          curl --fail --silent --show-error \
+            --output bundled/Store-API.v1.yml \
+            --request GET \
+            "https://api.stoplight.io/projects/${STOPLIGHT_PROJECT_ID}/branches/main/export/reference/Store-API.v1.yml" \
+            --header "Authorization: Bearer ${STOPLIGHT_TOKEN}" \
+            --header "Accept: application/yaml" \
+            --header "Stoplight-Version: 2022-12-05"
+
+      - name: Commit bundled spec to repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bundled/Store-API.v1.yml
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: update bundled Store-API spec [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
