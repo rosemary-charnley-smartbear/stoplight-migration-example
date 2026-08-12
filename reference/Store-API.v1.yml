@@ -28,8 +28,8 @@ paths:
         - Products
       parameters:
         # Cross-specification $ref: parameters defined in the shared Common spec.
-        - $ref: ./Common.v1.yaml#/components/parameters/PageLimit
-        - $ref: ./Common.v1.yaml#/components/parameters/PageCursor
+        - $ref: ./Common.v1.yml#/components/parameters/PageLimit
+        - $ref: ./Common.v1.yml#/components/parameters/PageCursor
         - name: status
           in: query
           schema:
@@ -50,7 +50,7 @@ paths:
                     type: array
                     items:
                       # External JSON Schema model file.
-                      $ref: ../models/Product.yaml
+                      $ref: ../models/Product.yml
                   nextCursor:
                     type: string
                     nullable: true
@@ -58,7 +58,7 @@ paths:
                   - data
         4XX:
           # Cross-specification $ref to a reusable response.
-          $ref: ./Common.v1.yaml#/components/responses/Problem
+          $ref: ./Common.v1.yml#/components/responses/Problem
     post:
       operationId: createProduct
       summary: Create a product
@@ -69,7 +69,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../models/Product.yaml
+              $ref: ../models/Product.yml
       responses:
         '201':
           description: The created product.
@@ -81,9 +81,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../models/Product.yaml
+                $ref: ../models/Product.yml
         '422':
-          $ref: ./Common.v1.yaml#/components/responses/Problem
+          $ref: ./Common.v1.yml#/components/responses/Problem
   '/products/{productId}':
     parameters:
       # Internal $ref to a parameter defined in this file's components block.
@@ -99,9 +99,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../models/Product.yaml
+                $ref: ../models/Product.yml
         '404':
-          $ref: ./Common.v1.yaml#/components/responses/NotFound
+          $ref: ./Common.v1.yml#/components/responses/NotFound
   /orders:
     post:
       operationId: createOrder
@@ -113,16 +113,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../models/Order.yaml
+              $ref: ../models/Order.yml
       responses:
         '201':
           description: The created order.
           content:
             application/json:
               schema:
-                $ref: ../models/Order.yaml
+                $ref: ../models/Order.yml
         '400':
-          $ref: ./Common.v1.yaml#/components/responses/Problem
+          $ref: ./Common.v1.yml#/components/responses/Problem
   '/orders/{orderId}':
     parameters:
       - name: orderId
@@ -143,15 +143,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: ../models/Order.yaml
+                  - $ref: ../models/Order.yml
                   - type: object
                     properties:
                       customer:
                         # references can chain across files.
-                        # External model that itself $refs into Common.v1.yaml —
-                        $ref: ../models/Customer.yaml
+                        # External model that itself $refs into Common.v1.yml —
+                        $ref: ../models/Customer.yml
         '404':
-          $ref: ./Common.v1.yaml#/components/responses/NotFound
+          $ref: ./Common.v1.yml#/components/responses/NotFound
 components:
   parameters:
     ProductId:
