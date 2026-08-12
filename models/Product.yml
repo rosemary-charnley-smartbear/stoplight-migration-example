@@ -36,7 +36,7 @@ properties:
     default: draft
   price:
     # JSON Schema reference to another local model file.
-    $ref: ./Money.yaml
+    $ref: ./Money.yml
   tags:
     type: array
     items:

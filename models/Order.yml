@@ -46,7 +46,7 @@ properties:
           minimum: 1
         unitPrice:
           # Reuse the shared Money model via JSON Schema $ref.
-          $ref: ./Money.yaml
+          $ref: ./Money.yml
       required:
         - productId
         - quantity

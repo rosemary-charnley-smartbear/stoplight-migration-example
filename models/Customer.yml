@@ -21,7 +21,7 @@ properties:
   defaultShippingAddress:
     # Reference into ANOTHER specification (the shared Common spec) rather than a
     # standalone model file. Stoplight resolves this across files at build time.
-    $ref: ../reference/Common.v1.yaml#/components/schemas/Address
+    $ref: ../reference/Common.v1.yml#/components/schemas/Address
 required:
   - email
 additionalProperties: false
