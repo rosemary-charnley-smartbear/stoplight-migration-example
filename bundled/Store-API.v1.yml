@@ -258,7 +258,7 @@ components:
           description: Lifecycle state of the product.
           default: draft
         price:
-          $ref: ./Money.yaml
+          $ref: '#/components/schemas/Money'
         tags:
           type: array
           uniqueItems: true
@@ -277,6 +277,29 @@ components:
         tags:
           - outdoor
           - bags
+    Money:
+      type: object
+      title: Money
+      description: A monetary amount as a minor-unit integer plus an ISO 4217 currency code. Reused across models via a JSON Schema `$ref`.
+      additionalProperties: false
+      properties:
+        amount:
+          type: integer
+          description: Value in the smallest currency unit (e.g. cents).
+          format: int64
+          minimum: 0
+          example: 1999
+        currency:
+          type: string
+          description: ISO 4217 three-letter currency code.
+          pattern: '^[A-Z]{3}$'
+          example: USD
+      required:
+        - amount
+        - currency
+      example:
+        amount: 1999
+        currency: USD
     Order:
       type: object
       title: Order
@@ -312,7 +335,7 @@ components:
                 type: integer
                 minimum: 1
               unitPrice:
-                $ref: ./Money.yaml
+                $ref: '#/components/schemas/Money'
             required:
               - productId
               - quantity
@@ -351,13 +374,38 @@ components:
           type: string
           maxLength: 160
         defaultShippingAddress:
-          $ref: ../reference/Common.v1.yaml#/components/schemas/Address
+          $ref: '#/components/schemas/Address'
       required:
         - email
       example:
         id: c1a2b3c4-d5e6-7f80-9a1b-2c3d4e5f6071
         email: dana@example.com
         displayName: Dana Ives
+    Address:
+      type: object
+      title: Address
+      description: 'A postal address, shared across customer and shipping models.'
+      additionalProperties: false
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        region:
+          type: string
+          description: 'State, province, or region.'
+        postalCode:
+          type: string
+        countryCode:
+          type: string
+          description: ISO 3166-1 alpha-2 country code.
+          pattern: '^[A-Z]{2}$'
+      required:
+        - line1
+        - city
+        - countryCode
     Error:
       type: object
       title: Error
